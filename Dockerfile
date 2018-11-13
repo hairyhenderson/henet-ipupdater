@@ -1,4 +1,4 @@
-FROM armhf/alpine:3.4
+FROM armhf/alpine:3.5
 
 RUN apk add --no-cache curl
 COPY ipupdater.sh /
