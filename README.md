@@ -9,13 +9,13 @@ It runs in a Docker container, and exits after a given delay. Docker's `--restar
 ## Usage
 
 ```console
-$ docker run -d -e DELAY=720 -e USERNAME=foo -e APIKEY=bar --restart=always hairyhenderson/henet-ipupdater
+$ docker run -d -e DELAY=720 -e HOSTNAME=foo.example.com -e APIKEY=bar --restart=always hairyhenderson/henet-ipupdater
 ```
 
 ## License
 
 [The MIT License](http://opensource.org/licenses/MIT)
 
-Copyright (c) 2016 Dave Henderson
+Copyright (c) 2016-2019 Dave Henderson
 
 [arm-arch-image]: https://img.shields.io/badge/built%20for-ARM-blue.svg?style=flat

@@ -1,18 +1,14 @@
 #!/bin/ash
 set -e
 
-if [ -z "$USERNAME" ]; then
-  echo "\$USERNAME is not set!"
-  exit 1
-fi
 if [ -z "$APIKEY" ]; then
   echo "\$APIKEY is not set!"
   exit 1
 fi
-if [ -z "$HOSTNAME_ID" ]; then
-  echo "\$HOSTNAME_ID is not set!"
+if [ -z "$HOSTNAME" ]; then
+  echo "\$HOSTNAME is not set!"
   exit 1
 fi
 
-curl -s https://${USERNAME}:${APIKEY}@ipv4.tunnelbroker.net/nic/update?hostname=${HOSTNAME_ID}
+curl -s https://${HOSTNAME}:${APIKEY}@dyn.dns.he.net/nic/update?hostname=${HOSTNAME}
 sleep ${DELAY}
