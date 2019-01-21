@@ -7,9 +7,12 @@ package main
 import (
 	"context"
 	"net"
+	"net/http"
 	"os"
 	"os/signal"
 	"time"
+
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 
 	ipupdater "github.com/hairyhenderson/henet-ipupdater"
 	"github.com/hairyhenderson/henet-ipupdater/version"
@@ -20,12 +23,14 @@ import (
 )
 
 var (
-	verbose  bool
-	domain   string
-	interval time.Duration
-	key      string
-	oneshot  bool
-	ip       net.IP
+	verbose       bool
+	domain        string
+	interval      time.Duration
+	key           string
+	oneshot       bool
+	ip            net.IP
+	enableMetrics bool
+	endpoint      string
 )
 
 func newCmd() *cobra.Command {
@@ -50,7 +55,12 @@ func newCmd() *cobra.Command {
 			c := make(chan os.Signal, 1)
 			signal.Notify(c, os.Interrupt)
 
-			u := ipupdater.New(domain, key, ip)
+			u := ipupdater.New(domain, key, endpoint, ip)
+
+			if enableMetrics {
+				http.Handle("/metrics", promhttp.Handler())
+				go http.ListenAndServe(":8080", nil)
+			}
 
 			done := make(chan error)
 			if oneshot {
@@ -89,6 +99,9 @@ func initFlags(command *cobra.Command) {
 	command.Flags().StringVarP(&key, "key", "k", "", "API Key")
 	command.Flags().BoolVar(&oneshot, "oneshot", false, "update just once instead of looping")
 	command.Flags().IPVar(&ip, "ip", nil, "force the IP address to this value (default: autodetected)")
+	command.Flags().StringVar(&endpoint, "endpoint", "https://dyn.dns.he.net/nic/update", "the dynamic DNS URL to communicate with (only HE.net supported for now)")
+
+	command.Flags().BoolVar(&enableMetrics, "metrics-enabled", true, "enable Prometheus metrics")
 
 	command.Flags().BoolVarP(&verbose, "verbose", "v", false, "Output extra logs")
 }
